@@ -26,10 +26,16 @@ public class cs_BoardManager : MonoBehaviour
             BlockArray[i] = BlockType.None;
         }
 
-        string CurrLine = "";
         for( int i = 0; i < BoardHeight; ++i )
         {
-           // CurrLine += ""
+            string CurrLine = "";
+
+            for ( int j = 0; j < BoardWidth; ++j )
+            {
+                CurrLine += BlockArray[ ( BoardHeight * i ) + j ].ToString() + " " ;
+            }
+
+            print( CurrLine );
         }
     }
 	

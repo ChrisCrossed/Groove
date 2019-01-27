@@ -26,10 +26,8 @@ public class cs_BoardManager : MonoBehaviour
             BlockArray[i] = BlockType.None;
         }
 
-        for( int j = 0; j < BoardWidth; ++j )
-        {
-            BlockArray[j] = BlockType.Red;
-        }
+        // TODO: Remove
+        TEST_RedBlocksBottomLine();
 
         PrintBoardToConsole();
     }
@@ -65,6 +63,19 @@ public class cs_BoardManager : MonoBehaviour
         }
     }
 	
+    void SetBlockAtPosition( BlockType blockType_, int x_, int y_ )
+    {
+        BlockArray[ ( BoardWidth * y_ ) + x_ ] = blockType_;
+    }
+
+    void TEST_RedBlocksBottomLine()
+    {
+        for (int i = 0; i < BoardWidth; ++i)
+        {
+            SetBlockAtPosition( BlockType.Red, i, 0 );
+        }
+    }
+
 	// Update is called once per frame
 	void Update ()
     {

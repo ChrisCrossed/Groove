@@ -24,44 +24,44 @@ public class cs_BoardManager : MonoBehaviour
         for (int i = 0; i < BoardWidth * BoardHeight; i++)
         {
             BlockArray[i] = BlockType.None;
-
-            // Test
-            if( i < BoardWidth )
-            {
-                BlockArray[i] = BlockType.Red;
-            }
         }
 
-        print( BoardWidth );
+        for( int j = 0; j < BoardWidth; ++j )
+        {
+            BlockArray[j] = BlockType.Red;
+        }
 
         PrintBoardToConsole();
     }
 
     void PrintBoardToConsole ()
     {
-        for (int i = BoardHeight - 1; i >= 0; --i)
+        for ( int i = BoardHeight - 1; i >= 0; --i )
         {
-            string CurrLine = "";
+            string CurrBlock = "";
 
-            for (int j = 0; j < BoardWidth; ++j)
+            for ( int j = 0; j < BoardWidth; ++j )  
             {
-                BlockType currBlock = BlockArray[(BoardHeight * i) + j];
+                BlockType currBlock = BlockArray[ ( BoardWidth * i ) + j ];
 
                 if (currBlock == BlockType.None )
                 {
-                    CurrLine += "[    ]";
+                    CurrBlock += "[    ]";
                 }
                 else if( currBlock == BlockType.Red )
                 {
-                    CurrLine += "[ X ]";
+                    CurrBlock += "[ X ]";
                 }
                 else
                 {
-                    CurrLine += "[ O ]";
+                    CurrBlock += "[ O ]";
                 }
+                
+                // The Key To Everything
+                // print( ( BoardWidth * i ) + j );
             }
 
-            print(CurrLine);
+            print( CurrBlock );
         }
     }
 	

@@ -26,8 +26,16 @@ public class cs_BoardManager : MonoBehaviour
             BlockArray[i] = BlockType.None;
         }
 
-        // TODO: Remove
-        TEST_RedBlocksBottomLine();
+        Init_Board();
+    }
+
+    void Init_Board()
+    {
+        SetBlockAtPosition(BlockType.Red, 0, BoardHeight - 1);
+        SetBlockAtPosition(BlockType.Blue, 0, BoardHeight - 5);
+
+        SetBlockAtPosition(BlockType.Red, 2, BoardHeight - 1);
+        SetBlockAtPosition(BlockType.Blue, 2, BoardHeight - 3);
 
         PrintBoardToConsole();
     }
@@ -61,6 +69,8 @@ public class cs_BoardManager : MonoBehaviour
 
             print( CurrBlock );
         }
+
+        print( "-------------------------------" );
     }
 	
     void SetBlockAtPosition( BlockType blockType_, int x_, int y_ )
@@ -68,17 +78,49 @@ public class cs_BoardManager : MonoBehaviour
         BlockArray[ ( BoardWidth * y_ ) + x_ ] = blockType_;
     }
 
-    void TEST_RedBlocksBottomLine()
+    void MoveBlocksDown()
     {
-        for (int i = 0; i < BoardWidth; ++i)
+        // Moving horizontally, check each column
+        for( int i = 0; i < BoardWidth; ++i )
         {
-            SetBlockAtPosition( BlockType.Red, i, 0 );
+            // Start from the left column and work upwards
+            for (int j = 0; j < BoardHeight; ++j)
+            {
+                // If the current block is not empty, proceed
+                if (BlockArray[(BoardWidth * j) + i] != BlockType.None)
+                {
+                    // If the spot below the current block does not exist, move on (Bottom row)
+                    if (j == 0) continue;
+
+                    // If the spot below the current block is also occupied, move on
+                    if (BlockArray[(BoardWidth * (j - 1) + i)] != BlockType.None) continue;
+
+                    // Store current block temporarily
+                    BlockType tempBlock = BlockArray[(BoardWidth * j) + i];
+
+                    // Move block one position down vertically
+                    SetBlockAtPosition(tempBlock, i, j - 1);
+
+                    // Clear current position
+                    SetBlockAtPosition(BlockType.None, i, j);
+                }
+            }
         }
     }
 
-	// Update is called once per frame
+    // Update is called once per frame
+    float f_Timer;
 	void Update ()
     {
-	
+        f_Timer += Time.deltaTime;
+
+        if(f_Timer > 1.0f)
+        {
+            MoveBlocksDown();
+
+            PrintBoardToConsole();
+
+            f_Timer = 0f;
+        }
 	}
 }

@@ -221,6 +221,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BoardWidth: 7
   BoardHeight: 5
+  MultiSizedBlocks: 1
 --- !u!1 &968879148
 GameObject:
   m_ObjectHideFlags: 0

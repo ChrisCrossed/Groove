@@ -15,6 +15,7 @@ public class cs_BoardManager : MonoBehaviour
     private BlockType[] BlockArray;
     [SerializeField] int BoardWidth = 7;
     [SerializeField] int BoardHeight = 9;
+    [SerializeField] bool MultiSizedBlocks = false;
 
     // Use this for initialization
     void Start()
@@ -27,15 +28,20 @@ public class cs_BoardManager : MonoBehaviour
         }
 
         Init_Board();
+
+        print(UnityEngine.Random.state);
+
+        UnityEngine.Random rand = new UnityEngine.Random();
+
+        // Forcibly sets the seed
+        // UnityEngine.Random.InitState(10);
+
+        
     }
 
     void Init_Board()
     {
-        SetBlockAtPosition(BlockType.Red, 0, BoardHeight - 1);
-        SetBlockAtPosition(BlockType.Blue, 0, BoardHeight - 5);
-
-        SetBlockAtPosition(BlockType.Red, 2, BoardHeight - 1);
-        SetBlockAtPosition(BlockType.Blue, 2, BoardHeight - 3);
+        SpawnNewBlock();
 
         PrintBoardToConsole();
     }
@@ -72,10 +78,62 @@ public class cs_BoardManager : MonoBehaviour
 
         print( "-------------------------------" );
     }
-	
+
+    void SpawnNewBlock()
+    {
+        // Random value between 0 and 2 to assign size of block.
+        // 0 = 2x2, 1 = 2Wx3H, 2 = 3Wx2H
+        int blockSize = 0;
+
+        // Determine size of next block (2x2, 3x3, etc...)
+        BlockType[] nextBlock;
+        if (!MultiSizedBlocks) nextBlock = new BlockType[4];
+        else
+        {
+            // Determine if next block is 2x2, 2x3 or 3x2
+            blockSize = (int)UnityEngine.Random.Range(0, 3);
+            
+            // 1/3rd chance for 2x2, otherwise needs 6 spaces for the block
+            if( blockSize == 0 )
+                nextBlock = new BlockType[4];
+            else
+                nextBlock = new BlockType[6];
+        }
+
+        // Set 'CurrBlock' based on block size (2x2, 3x3, etc...)
+        int startX = BoardWidth / 2;
+        int startY = BoardHeight - 2;
+        
+        // If starting block is 3 high, move the startY down;
+        if ( blockSize == 1 )
+            startY = BoardHeight - 3;
+
+        // Randomly determine the blocks for the array
+        for( int i = 0; i < nextBlock.Length; ++i )
+        {
+            nextBlock[i] = GetRandomBlock();
+        }
+
+        // Always initialize the first four blocks (NEED TO CONSIDER as rotating 3x2 or 2x3 changes things up!!!)
+
+
+        // Set array of blocks to populate
+        // TEST
+        // SetBlockAtPosition( BlockType.Red, startX, startY );
+    }
+
     void SetBlockAtPosition( BlockType blockType_, int x_, int y_ )
     {
         BlockArray[ ( BoardWidth * y_ ) + x_ ] = blockType_;
+    }
+
+    BlockType GetRandomBlock()
+    {
+        // Get a list of all BlockType values
+        var enumList = Enum.GetValues( typeof ( BlockType ) );
+
+        // Pick from the second or third choices (Red or Blue)
+        return (BlockType) enumList.GetValue( (int) UnityEngine.Random.Range( 1, 3 ) );
     }
 
     void MoveBlocksDown()
@@ -84,7 +142,7 @@ public class cs_BoardManager : MonoBehaviour
         for( int i = 0; i < BoardWidth; ++i )
         {
             // Start from the left column and work upwards
-            for (int j = 0; j < BoardHeight; ++j)
+            for (int j = 1; j < BoardHeight; ++j)
             {
                 // If the current block is not empty, proceed
                 if (BlockArray[(BoardWidth * j) + i] != BlockType.None)
@@ -114,7 +172,7 @@ public class cs_BoardManager : MonoBehaviour
     {
         f_Timer += Time.deltaTime;
 
-        if(f_Timer > 1.0f)
+        if(f_Timer > 1f)
         {
             MoveBlocksDown();
 
